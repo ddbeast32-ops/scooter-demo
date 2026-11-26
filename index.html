@@ -21,8 +21,9 @@
   #header p { font-size: 13px; opacity: .7; }
 
   /* Bottom area: buttons + info panel */
-  #bottom { position: absolute; left: 16px; right: 16px; bottom: calc(16px + env(safe-area-inset-bottom)); max-width: 460px; margin: 0 auto; display: flex; flex-direction: column; gap: 10px; }
+  #bottom { position: absolute; left: 16px; right: 16px; bottom: calc(80px + env(safe-area-inset-bottom)); max-width: 460px; margin: 0 auto; display: flex; flex-direction: column; gap: 10px; pointer-events: none; }
   #panel { padding: 14px; }
+  #bottom button { pointer-events: auto; }
   #tabs { display: flex; gap: 6px; margin-bottom: 10px; }
   .tab { flex: 1; padding: 8px; border-radius: 10px; background: rgba(255,255,255,.08); font-size: 13px; }
   .tab.active { background: #4f8cff; }
@@ -30,7 +31,7 @@
 
   .row { display: flex; gap: 10px; }
   .action { flex: 1; padding: 12px; border-radius: 12px; background: rgba(15,18,24,.78); pointer-events: auto; }
-  #ar-button { position: absolute; left: 16px; right: 16px; bottom: calc(16px + env(safe-area-inset-bottom)); max-width: 460px; margin: 0 auto; height: 52px; border-radius: 14px; background: #4f8cff; font-weight: 600; pointer-events: auto; }
+  #ar-button { position: absolute; left: 16px; right: 16px; bottom: calc(16px + env(safe-area-inset-bottom)); max-width: 460px; margin: 0 auto; height: 52px; z-index: 10; border-radius: 14px; background: #4f8cff; font-weight: 600; pointer-events: auto; }
 
   /* Hotspots */
   .hotspot { width: 28px; height: 28px; border-radius: 50%; background: #4f8cff; border: 2px solid #fff; font-size: 13px; font-weight: 700; pointer-events: auto; }
@@ -85,8 +86,6 @@
       <button class="action" id="toggle-info">Hide info</button>
       <button class="action" id="toggle-spots">Hide points</button>
     </div>
-    <!-- Space so the AR button does not cover the controls -->
-    <div id="ar-space" style="height:52px"></div>
   </div>
 </model-viewer>
 
@@ -159,7 +158,6 @@
     if (!viewer.canActivateAR) {
       $("notice").textContent = "AR is not available here. Open this page on a supported phone.";
       $("notice").hidden = false;
-      $("ar-space").hidden = true;
     }
   });
 
