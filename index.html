@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>AR Product View</title>
+<title>Electric Scooter AR</title>
 <script type="module" src="https://cdn.jsdelivr.net/npm/@google/model-viewer@4.3.0/dist/model-viewer.min.js"></script>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -49,11 +49,12 @@
 </head>
 <body>
 
-<!-- 1. Change src to your own file, e.g. src="model.glb" -->
+<!-- 1. Keep scooter.glb in the same folder as this file -->
 <model-viewer
   id="viewer"
-  src="https://modelviewer.dev/shared-assets/models/Astronaut.glb"
-  alt="3D product model"
+  src="scooter.glb"
+  alt="3D model of an electric scooter"
+  camera-orbit="65deg 75deg auto"
   ar
   ar-modes="webxr scene-viewer quick-look"
   ar-placement="floor"
@@ -92,19 +93,23 @@
 <script type="module">
   // ===== 2. EDIT YOUR INFO HERE =====
   const product = {
-    title: "Astronaut",
-    subtitle: "Interactive AR preview",
+    title: "Electric Scooter",
+    subtitle: "View it in your space",
     tabs: {
-      Overview: "A short description of your product goes here.",
-      Specs: "Height: 1.8 m<br>Weight: 90 kg<br>Material: Composite",
-      Features: "• Feature one<br>• Feature two<br>• Feature three"
+      Overview: "An electric scooter with a yellow body, black frame and wide tyres. Tap a number to explore its parts.",
+      // Replace each "Add value" with your real figures
+      Specs: "Top speed: Add value<br>Range: Add value<br>Motor: Add value<br>Battery: Add value<br>Weight: Add value",
+      Features: "• Front headlight<br>• Handlebar display<br>• Rear suspension<br>• Flat standing deck<br>• Side kickstand"
     },
-    // x, y, z are relative to the model size:
-    // x: -0.5 left to 0.5 right | y: -0.5 bottom to 0.5 top | z: -0.5 back to 0.5 front
+    // Positions in metres on this model:
+    // x = side to side | y = height | z = back (-) to front (+)
+    // normal = the direction the point faces
     hotspots: [
-      { x: 0,    y: 0.32,  z: 0.4, title: "Top",    text: "Info about the top part." },
-      { x: 0.1,  y: 0,     z: 0.4, title: "Middle", text: "Info about the middle part." },
-      { x: -0.1, y: -0.35, z: 0.4, title: "Base",   text: "Info about the base." }
+      { position: "0.135m 0.776m 0.238m",  normal: "1m 0m 0m", title: "Handlebar",       text: "Grips, brake levers and display." },
+      { position: "-0.013m 0.441m 0.352m", normal: "0m 0m 1m", title: "Headlight",       text: "Front light mounted on the steering stem." },
+      { position: "0.071m 0.131m 0.023m",  normal: "1m 0m 0m", title: "Deck",            text: "Flat standing area between the wheels." },
+      { position: "0.052m 0.169m -0.183m", normal: "1m 0m 0m", title: "Rear suspension", text: "Spring shocks that soften bumps." },
+      { position: "0.073m 0.13m -0.367m",  normal: "1m 0m 0m", title: "Rear wheel",      text: "Wide tyre with a mudguard above it." }
     ]
   };
   // ==================================
@@ -142,24 +147,15 @@
     button.textContent = i + 1;
     button.setAttribute("aria-label", spot.title);
     button.dataset.visibilityAttribute = "visible";
-    button.dataset.position = "0m 0m 0m";
-    button.dataset.normal = "0m 0m 1m";
+    button.dataset.position = spot.position;
+    button.dataset.normal = spot.normal;
     button.addEventListener("click", () => showInfo(`<strong>${spot.title}</strong><br>${spot.text}`));
     viewer.appendChild(button);
     return button;
   });
 
-  // Position hotspots once the model size is known
+  // Show a message if this device cannot do AR
   viewer.addEventListener("load", () => {
-    const size = viewer.getDimensions();
-    const center = viewer.getBoundingBoxCenter();
-    product.hotspots.forEach((spot, i) => {
-      viewer.updateHotspot({
-        name: `hotspot-${i}`,
-        position: `${center.x + spot.x * size.x}m ${center.y + spot.y * size.y}m ${center.z + spot.z * size.z}m`
-      });
-    });
-
     if (!viewer.canActivateAR) {
       $("notice").textContent = "AR is not available here. Open this page on a supported phone.";
       $("notice").hidden = false;
